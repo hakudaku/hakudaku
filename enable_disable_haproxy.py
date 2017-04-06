@@ -15,9 +15,10 @@ def run(haproxy, cmd, bg, backend):
 
 def main():
   args = sys.argv[1:]
+  usage = ('Usage: haproxy_enable_disable.py [ACTION] [COLO] [CLUSTER]\n'
+           'Example: haproxy_enable_disable.py [enable|disable] [snc|dub|snc] [c1|c2|c3|c4]')
   if not args or len(args) < 3:
-    print 'Usage: haproxy_enable_disable.py [ACTION] [COLO] [CLUSTER]'
-    print 'Example: haproxy_enable_disable.py [enable|disable] [snc|dub|snc] [c1|c2|c3|c4]'
+    print usage 
     sys.exit(1)     
   path = '/usr/local/lib/haproxyctl/haproxyctl'
   haproxyctl = os.path.abspath(path)
@@ -44,7 +45,7 @@ def main():
                               'email-msys41', 'email-msys42', 'email-msys43', 'email-msys44']
 
   for i in range(8):
-    haproxy_snc.append('mta-haproxy' + str(i) + '.snc1')
+    haproxy_snc.append('mta-haproxy' + str(i + 1) + '.snc1')
 
   #################################################SAC################################################
   haproxy_sac = []
@@ -68,7 +69,7 @@ def main():
                               'email-msys26', 'email-msys27', 'email-msys28', 'email-msys29']
 
   for i in range(6):
-    haproxy_sac.append('mta-haproxy' + str(i) + '.sac1')
+    haproxy_sac.append('mta-haproxy' + str(i + 1) + '.sac1')
 
   ############################DUB################################################
   haproxy_dub = []
@@ -124,7 +125,7 @@ def main():
   msys_group_dub_c4['msys_au'] = ['email-msys110', 'email-msys111', 'email-msys112', 'email-msys113']
 
   for i in range(12):
-    haproxy_dub.append('mta-haproxy' + str(i) + '.dub1')
+    haproxy_dub.append('mta-haproxy' + str(i + 1) + '.dub1')
 
   ######Conditionals based on user arguments###############
 
@@ -134,47 +135,49 @@ def main():
         cmd = 'sudo %s %s server %s/%s' % (haproxyctl, args[0], bg, backend)
         run(haproxy_snc, cmd, bg, backend)
   
-  if args[1] == 'snc' and args[2] == 'c2':
+  elif args[1] == 'snc' and args[2] == 'c2':
     for bg in msys_group_snc_c2.keys():
       for backend in msys_group_snc_c2[bg]:
         cmd = 'sudo %s %s server %s/%s' % (haproxyctl, args[0], bg, backend)
         run(haproxy_snc, cmd, bg, backend)
 
-  if args[1] == 'sac' and args[2] == 'c1':
+  elif args[1] == 'sac' and args[2] == 'c1':
     for bg in msys_group_sac_c1.keys():
       for backend in msys_group_sac_c1[bg]:
         cmd = 'sudo %s %s server %s/%s' % (haproxyctl, args[0], bg, backend)
         run(haproxy_sac, cmd, bg, backend)
 
-  if args[1] == 'sac' and args[2] == 'c2':
+  elif args[1] == 'sac' and args[2] == 'c2':
     for bg in msys_group_sac_c2.keys():
       for backend in msys_group_sac_c2[bg]:
         cmd = 'sudo %s %s server %s/%s' % (haproxyctl, args[0], bg, backend)
         run(haproxy_sac, cmd, bg, backend)
 
-  if args[1] == 'dub' and args[2] == 'c1':
+  elif args[1] == 'dub' and args[2] == 'c1':
     for bg in msys_group_dub_c1.keys():
       for backend in msys_group_dub_c1[bg]:
         cmd = 'sudo %s %s server %s/%s' % (haproxyctl, args[0], bg, backend)
         run(haproxy_dub, cmd, bg, backend)
 
-  if args[1] == 'dub' and args[2] == 'c2':
+  elif args[1] == 'dub' and args[2] == 'c2':
     for bg in msys_group_dub_c2.keys():
       for backend in msys_group_dub_c2[bg]:
         cmd = 'sudo %s %s server %s/%s' % (haproxyctl, args[0], bg, backend)
         run(haproxy_dub, cmd, bg, backend)
 
-  if args[1] == 'dub' and args[2] == 'c3':
+  elif args[1] == 'dub' and args[2] == 'c3':
     for bg in msys_group_dub_c3.keys():
       for backend in msys_group_dub_c3[bg]:
         cmd = 'sudo %s %s server %s/%s' % (haproxyctl, args[0], bg, backend)
         run(haproxy_dub, cmd, bg, backend)
 
-  if args[1] == 'dub' and args[2] == 'c4':
+  elif args[1] == 'dub' and args[2] == 'c4':
     for bg in msys_group_dub_c4.keys():
       for backend in msys_group_dub_c4[bg]:
         cmd = 'sudo %s %s server %s/%s' % (haproxyctl, args[0], bg, backend)
         run(haproxy_dub, cmd, bg, backend)
+  else:
+    print usage 
 
 
 # This is the standard boilerplate that calls the main() function.
