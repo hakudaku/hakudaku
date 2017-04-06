@@ -78,7 +78,6 @@ def main():
   msys_group_dub_c1['msys_sg'] = ['email-msys83', 'email-msys84']
   msys_group_dub_c1['msys_my'] = ['email-msys86', 'email-msys87']
   msys_group_dub_c1['msys_jp'] = ['email-msys86', 'email-msys87']
-  msys_group_dub_c1['msys_de'] = ['email-msys86', 'email-msys87']
   msys_group_dub_c1['msys_ar'] = ['email-msys80', 'email-msys81']
   msys_group_dub_c1['msys_ae'] = ['email-msys87', 'email-msys88']
   msys_group_dub_c1['msys_il'] = ['email-msys87', 'email-msys88']
@@ -90,6 +89,8 @@ def main():
   msys_group_dub_c1['msys_br'] = ['email-msys86', 'email-msys87', 'email-msys88']
   msys_group_dub_c1['msys_fr'] = ['email-msys80', 'email-msys81', 'email-msys82', 'email-msys83', 'email-msys84',
                                   'email-msys85']
+  msys_group_dub_c1['msys_de'] = ['email-msys82', 'email-msys83', 'email-msys84', 'email-msys85', 'email-msys86',
+                                  'email-msys87',  'email-msys88', 'email-msys89']
 
   msys_group_dub_c2 = {}
   msys_group_dub_c2['msys_es'] = ['email-msys94', 'email-msys95']
@@ -103,7 +104,6 @@ def main():
   msys_group_dub_c3['msys_sg'] = ['email-msys103', 'email-msys104']
   msys_group_dub_c3['msys_my'] = ['email-msys106', 'email-msys107']
   msys_group_dub_c3['msys_jp'] = ['email-msys106', 'email-msys107']
-  msys_group_dub_c3['msys_de'] = ['email-msys106', 'email-msys107']
   msys_group_dub_c3['msys_ar'] = ['email-msys100', 'email-msys101']
   msys_group_dub_c3['msys_ae'] = ['email-msys107', 'email-msys108']
   msys_group_dub_c3['msys_il'] = ['email-msys107', 'email-msys108']
@@ -115,6 +115,8 @@ def main():
   msys_group_dub_c3['msys_br'] = ['email-msys106', 'email-msys107', 'email-msys108']
   msys_group_dub_c3['msys_fr'] = ['email-msys100', 'email-msys101', 'email-msys102', 'email-msys103', 'email-msys104',
                                   'email-msys105']
+  msys_group_dub_c3['msys_de'] = ['email-msys102', 'email-msys103', 'email-msys104', 'email-msys105', 'email-msys106',
+                                  'email-msys107',  'email-msys108', 'email-msys109']
 
   msys_group_dub_c4 = {}
   msys_group_dub_c4['msys_es'] = ['email-msys114', 'email-msys115']
