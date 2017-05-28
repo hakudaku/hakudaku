@@ -2,60 +2,29 @@
 
 import re
 import sys
+import os
+import os.path
 
-# Script for counting how many times a string appears in a file (e.g. log file) broken down by hour, minute, or seconds
+# Script for counting how many times a string appears in a file (e.g. log file) broken down by time, minute, or seconds
 # The regex can be tweaked to customize the search string
 
-def hour(file_path):
-  hour_hash = {}
+
+def time(pattern, file_path):
+  time_hash = {}
   f = open(file_path, 'rU')
   for line in f:
-    match = re.search(r'^\d\d\d\d-\d\d-\d\d\s+(\d\d)\S+(wp.pl)', line)
+    match = re.search(pattern, line)
     if match:
-      hour = match.group(1)
+      time = match.group(1)
       string = match.group(2)
-      if string and not hour in hour_hash:
-       hour_hash[hour] = 1
-      elif string and hour in hour_hash:
-        hour_hash[hour] = hour_hash[hour] + 1 
+      if string and not time in time_hash:
+       time_hash[time] = 1
+      elif string and time in time_hash:
+        time_hash[time] = time_hash[time] + 1
   f.close()
 
-  for key in sorted(hour_hash.keys()):
-    print key, hour_hash[key]
-
-def minute(file_path):
-  minute_hash = {}
-  f = open(file_path, 'rU')
-  for line in f:
-    match = re.search(r'^\d\d\d\d-\d\d-\d\d\s+(\d\d:\d\d):\d\d\S+(wp.pl)', line)
-    if match:
-      minute = match.group(1)
-      string = match.group(2)
-      if string and not minute in minute_hash:
-       minute_hash[minute] = 1
-      elif string and minute in minute_hash:
-        minute_hash[minute] = minute_hash[minute] + 1
-  f.close()
-
-  for key in sorted(minute_hash.keys()):
-    print key, minute_hash[key]
-
-def second(file_path):
-  second_hash = {}
-  f = open(file_path, 'rU')
-  for line in f:
-    match = re.search(r'^\d\d\d\d-\d\d-\d\d\s+(\d\d:\d\d:\d\d)\S+(wp.pl)', line)
-    if match:
-      second = match.group(1)
-      string = match.group(2)
-      if string and not second in second_hash:
-       second_hash[second] = 1
-      elif string and second in second_hash:
-        second_hash[second] = second_hash[second] + 1
-  f.close()
-
-  for key in sorted(second_hash.keys()):
-    print key, second_hash[key]
+  for key in sorted(time_hash.keys()):
+    print key, time_hash[key]
 
 def main():
   args = sys.argv[1:]
@@ -63,13 +32,21 @@ def main():
   if not args:
     print ('usage: [--hour|--minute|--second] --file <file_path>')
     sys.exit(1)
-
-  if args[0] == '--hour':
-    hour(args[2]) 
-  if args[0] == '--minute':
-    minute(args[2])
-  if args[0] == '--second':
-    second(args[2]) 
+  
+  hour_match = r'^\d\d\d\d-\d\d-\d\d\s+(\d\d)\S+(telus.net)'
+  min_match = r'^\d\d\d\d-\d\d-\d\d\s+(\d\d:\d\d):\d\d\S+(telus.net)'
+  sec_match = r'^\d\d\d\d-\d\d-\d\d\s+(\d\d:\d\d:\d\d)\S+(telus.net)'
+  path = args[2]
+  
+  if os.path.exists(path):
+    if args[0] == '--hour':
+      time(hour_match, path)
+    if args[0] == '--minute':
+      time(min_match, path)
+    if args[0] == '--second':
+      time(sec_match, path) 
+  else:
+    print '%s does not exist' % path
 
 if __name__ == '__main__':
   main()
