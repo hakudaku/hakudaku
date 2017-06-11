@@ -33,9 +33,9 @@ def main():
     print ('usage: [--hour|--minute|--second] --file <file_path>')
     sys.exit(1)
   
-  hour_match = r'^\d\d\d\d-\d\d-\d\d\s+(\d\d)\S+(telus.net)'
-  min_match = r'^\d\d\d\d-\d\d-\d\d\s+(\d\d:\d\d):\d\d\S+(telus.net)'
-  sec_match = r'^\d\d\d\d-\d\d-\d\d\s+(\d\d:\d\d:\d\d)\S+(telus.net)'
+  hour_match = r'^\d\d\d\d-\d\d-\d\d\s+(\d\d)\S+(hotmaim.com)'
+  min_match = r'^\d\d\d\d-\d\d-\d\d\s+(\d\d:\d\d):\d\d\S+(hotmaim.com)'
+  sec_match = r'^\d\d\d\d-\d\d-\d\d\s+(\d\d:\d\d:\d\d)\S+(hotmaim.com)'
   path = args[2]
   
   if os.path.exists(path):
