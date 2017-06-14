@@ -77,9 +77,9 @@ def main():
   snc_header_port_map['x-virtual-mta: pe_commercial'] = [40131, 'noreply@r.grouponmail.com.pe', 'pe_commercial']
   snc_header_port_map['x-virtual-mta: transactional'] = [40121, 'noreply@r.groupon.com', 'transactional']
   snc_header_port_map['x-virtual-mta: unclean'] = [40122, 'noreply@r.groupon.com', 'unclean']
-  #snc_header_port_map['x-virtual-mta: ls_commercial'] = [40139, 'noreply@r.groupon.com', 'ls_commercial']
-  #snc_header_port_map['x-virtual-mta: ls_unclean'] = [40141, 'noreply@r.groupon.com', 'ls_unclean']
-  #snc_header_port_map['x-virtual-mta: ls_transactional'] = [40140, 'noreply@r.groupon.com', 'ls_transactional']
+  snc_header_port_map['x-virtual-mta: ls_commercial'] = [40139, 'noreply@r.groupon.com', 'ls_commercial']
+  snc_header_port_map['x-virtual-mta: ls_unclean'] = [40141, 'noreply@r.groupon.com', 'ls_unclean']
+  snc_header_port_map['x-virtual-mta: ls_transactional'] = [40140, 'noreply@r.groupon.com', 'ls_transactional']
 
   dub_header_port_map = {}
   dub_header_port_map['x-virtual-mta: my_commercial'] = [40112, 'noreply@r.grouponmail.my', 'my_commercial']
