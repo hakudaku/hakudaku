@@ -5,12 +5,12 @@ import re
 from pssh import ParallelSSHClient
 import paramiko, base64
 import logging
-from socket import gethostbyname, gaierror
+from socket import gethostbyname, gaierror, timeout
 
 def ssh(hosts, cmd):
   failed_hosts = []
   logging.getLogger('pssh.ssh_client').addHandler(logging.NullHandler()) #Adding NullHandler to the logger
-  client = ParallelSSHClient(hosts)
+  client = ParallelSSHClient(hosts, timeout=5)
   output = client.run_command(cmd, stop_on_errors=False)
   for host in output:
     for line in output[host]['stdout']:
@@ -31,7 +31,7 @@ def ssh2(host, cmd):
     client = paramiko.SSHClient()
     client.load_system_host_keys()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    client.connect(host)
+    client.connect(host, timeout=5)
     stdin, stdout, stderr = client.exec_command(cmd)
     for line in stdout:
       print line.strip('\n')
@@ -39,7 +39,7 @@ def ssh2(host, cmd):
       print line.strip('\n')
     print '\n'
     client.close()
-  except gaierror:
+  except (gaierror, timeout):
     print '***********Check Host %s. It is either down, invalid, or authentication failed*************\n' % (host)
 
 def main():
