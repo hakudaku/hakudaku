@@ -15,7 +15,7 @@ def ssh(hosts, cmd):
   for host in output:
     for line in output[host]['stdout']:
       print line
-    print '\n'
+    print '\r'
     if output[host]['exception'] != None:
       print '***********Check Host %s. It is either down, invalid, or authentication failed*************\n' % (host)
     if output[host]['exit_code'] != 0:
@@ -37,7 +37,7 @@ def ssh2(host, cmd):
       print line.strip('\n')
     for line in stderr:
       print line.strip('\n')
-    print '\n'
+    print '\r'
     client.close()
   except (gaierror, timeout):
     print '***********Check Host %s. It is either down, invalid, or authentication failed*************\n' % (host)
