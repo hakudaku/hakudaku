@@ -49,7 +49,7 @@ def main():
   host_yml_path = os.path.expanduser('~') + '/git_repos/operations/puppet/modules/puppet/files/hostinfo/hosts.yaml'
   enforcer_path = os.path.expanduser('~') + '/git_repos/operations/puppet/modules/truth/manifests/enforcer.pp'
   puppet_search_module_path = os.path.expanduser('~') + '/git_repos/operations/puppet/modules/'
-  my_regex = r'(%s).*?services:(.*?)memory' % host
+  my_regex = r'(%s)\..*?services:(.*?)memory' % host
   out(host, host_yml_path, my_regex, enforcer_path, puppet_search_module_path)
 
 # This is the standard boilerplate that calls the main() function.
