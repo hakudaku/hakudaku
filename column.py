@@ -1,6 +1,6 @@
 #!/usr/bin/python -tt
 
-f = open('test2', 'rU')
+f = open('test1', 'rU')
 my_list = []
 for l in f:
   my_list.append(l.split())
