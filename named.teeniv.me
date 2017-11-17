@@ -1,0 +1,29 @@
+;
+; Zone file for teeniv.me 
+;
+; The full zone file
+;
+$TTL 3D
+@       IN      SOA     ns.teeniv.me. hostmaster.teeniv.me. (
+                        201711091       ; serial, todays date + todays serial #
+                        8H              ; refresh, seconds
+                        2H              ; retry, seconds
+                        4W              ; expire, seconds
+                        1D )            ; minimum, seconds
+;
+                NS      ns              ; Inet Address of name server
+                MX      10 mx.teeniv.me.     ; Primary Mail Exchanger
+                TXT     "v=spf1 ip4:54.219.163.119 ~all"  ; spf record - softfail only
+                
+;
+localhost       A       127.0.0.1
+ns              A       54.219.163.119  
+mx              A       54.219.163.119
+smtp		A	54.219.163.119
+imap		A	54.219.163.119
+www             A       54.219.163.119
+
+
+default._domainkey   TXT   "v=DKIM1\; g=*\; k=rsa\; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDaaTCRlKtak2M66FL89KnJi6MT1U9qBX2n8wAqHWPZUIzEENDG6pzgHY3vltIB0Jr096D0+UzzTNOVOBpD1q8ppe0RGbs+jvYwWpII0c08J0/JRnp1LgOxtE+M42kr90CaDhpZS81HwV7jbAHhkxPgI7A0h0cMXOSWOSxWBxfwFQIDAQAB"
+
+_dmarc.teeniv.me.    TXT    "v=DMARC1\;p=none\;pct=100\;rua=mailto:vineet@teeniv.me"
