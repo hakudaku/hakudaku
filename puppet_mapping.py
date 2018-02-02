@@ -1,19 +1,22 @@
-#!/Users/vbhatia/ENV/bin/python -tt
+#!/usr/bin/env python -tt
 import sys
 import re
 import os
 from collections import defaultdict
 import commands
+import glob
 
-def out(host, host_yml_path, my_regex, enforcer_path, puppet_search_module_path):
-  service = defaultdict(list) 
+## Script to display puppet configuration for a host ##
+
+def find_puppet_config(host, host_yml_path, my_regex, enforcer_path, puppet_search_module_path):
+  service = defaultdict(list)
   f = open(os.path.abspath(host_yml_path), 'r')
   match = re.findall(my_regex, f.read(), re.DOTALL)
   f.close()
   f = open('tmp.txt', 'w')
   for t in match:
     f.write(' '.join(str(s) for s in t) + '\n') # For each tuple in the list, you convert all of its elements into strings, join them by spaces to form the string, and write the string with a new line to the file. Then you close the file.
-  f.close()  
+  f.close()
 
   f = open('tmp.txt', 'r')
   service_match = re.findall(r'\s+-\s+(\S+)', f.read())
@@ -22,8 +25,8 @@ def out(host, host_yml_path, my_regex, enforcer_path, puppet_search_module_path)
     service['a'].append(x)
   for k, dk in service.iteritems():
     for x in dk:
-      print x 
-  
+      print x
+
   for k, dk in service.iteritems():
     for x in dk:
       f = open(enforcer_path, 'r')
@@ -37,7 +40,7 @@ def out(host, host_yml_path, my_regex, enforcer_path, puppet_search_module_path)
         output = commands.getoutput(cmd)
         match = re.search(r'^(.+):class', output)
         print match.group(1)
-    
+
 def main():
   args = sys.argv[1:]
   usage = ('puppet_mapping.py [host]\n'
@@ -46,11 +49,14 @@ def main():
     print usage
     sys.exit(1)
   host = args[0]
-  host_yml_path = os.path.expanduser('~') + '/git_repos/operations/puppet/modules/puppet/files/hostinfo/hosts.yaml'
-  enforcer_path = os.path.expanduser('~') + '/git_repos/operations/puppet/modules/truth/manifests/enforcer.pp'
-  puppet_search_module_path = os.path.expanduser('~') + '/git_repos/operations/puppet/modules/'
+  home_dir = os.path.expanduser('~')
+  puppet_repo = glob.glob(home_dir + '/*/operations/puppet')
+  for x in puppet_repo: 
+    host_yml_path =  x + '/modules/puppet/files/hostinfo/hosts.yaml'
+    enforcer_path =  x + '/modules/truth/manifests/enforcer.pp'
+    puppet_search_module_path =  x + '/modules/'  
   my_regex = r'(%s)\..*?services:(.*?)memory' % host
-  out(host, host_yml_path, my_regex, enforcer_path, puppet_search_module_path)
+  find_puppet_config(host, host_yml_path, my_regex, enforcer_path, puppet_search_module_path)
 
 # This is the standard boilerplate that calls the main() function.
 if __name__ == '__main__':
