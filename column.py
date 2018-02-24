@@ -4,5 +4,6 @@ f = open('test2', 'rU')
 my_list = []
 for l in f:
   my_list.append(l.split())
-for l in my_list:
-  print l[1]
+sorted_list = sorted(my_list)
+for l in sorted_list:
+  print l[0]
