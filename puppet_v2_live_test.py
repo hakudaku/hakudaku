@@ -5,6 +5,7 @@ import logging
 import re
 
 def run(host, cmd):
+  print cmd
   logging.getLogger('pssh.ssh_client').addHandler(logging.NullHandler()) #Adding NullHandler to the logger
   client = ParallelSSHClient(host)
   output = client.run_command(cmd, stop_on_errors=True, sudo=True)
@@ -64,12 +65,12 @@ def main():
     elif repo == 'infradb':
       f = open(cherry_pick_url_file, 'rU')
       for line in f:
-        git_fetch_cmd = line
+        git_fetch_cmd = line.strip()
         match = re.search(r'^git\s+\S+\s+(\S+).', git_fetch_cmd)
         orig_str = match.group(1)
         replace_string = 'http://git.rfiserve.net:29419/operations/infradb.git'
         git_fetch_cmd = git_fetch_cmd.replace(orig_str, replace_string)
-        cmd = '%s;%s;%s;%s;%s' % (pup_down_cmd, chdir_pup, git_fetch_cmd, infra_reset_cmd, pup_force_cmd)
+        cmd = '%s;%s;%s;%s;%s' % (pup_down_cmd, chdir_infra, git_fetch_cmd, infra_reset_cmd, pup_force_cmd)
         run(host, cmd)
     else:
       print usage
