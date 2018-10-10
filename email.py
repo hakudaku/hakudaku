@@ -27,7 +27,7 @@ def main():
     email_sender = args[1]
     email_sub = args[3]
     email_body = args[5]
-
+    
     answers = dns.resolver.query(domain, 'MX')
     mx_list = []
     for rdata in answers:
@@ -39,3 +39,6 @@ def main():
 
 if __name__ == '__main__':
   main()
+
+
+

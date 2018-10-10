@@ -66,3 +66,6 @@ with open(my_bash, 'r') as fin:
 
 # Rename out file to .bashrc
 os.rename(os.path.expanduser('~') + '/' + my_out_file, my_bash)
+
+# Re-read .bashrc
+output = commands.getoutput('source' + ' ' + my_bash)
