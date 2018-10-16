@@ -1,54 +1,93 @@
 #!/usr/bin/python
 
-import commands 
+import commands
 import re
 import sys
 import argparse
-
+import os
+from shutil import move
+from tempfile import mkstemp
+from os import fdopen, remove
 
 EXIT_OK = 0
 EXIT_WARN = 1
 EXIT_CRITICAL = 2
 
 def AdminStatus(switch_name, oid, int_dict):
+    int_up = []
+    int_down = []
     snmpwalk_cmd = 'snmpwalk -v 2c -c r0ck3tfu31# {0} {1}'.format(switch_name, oid)
     (status, output) = commands.getstatusoutput(snmpwalk_cmd)
-
     for key in int_dict.keys():
         my_dict = dict(re.findall('({0}).+:\s+(\w+)\('.format(key), output))
         for key in my_dict.keys():
             if my_dict[key] == 'down':
-                print 'CRITICAL: {0} is down'.format(int_dict[key])
-                count = 1
-            else:
-                print 'OK: {0} is up'.format(int_dict[key])
-                count = 0 
+                int_down.append(int_dict[key])
+            elif my_dict[key] == 'up':
+                int_up.append(int_dict[key])
 
-    if count > 0:
+    if len(int_down) > 0:
+        s = ', '.join(int_down)
+        print 'CRITICAL: Interfaces {0} are down!'.format(s) 
         sys.exit(EXIT_CRITICAL)
-    elif count == 0:
+    else:
+        s = ', '.join(int_up)
+        print 'OK: Interfaces {0} are up!'.format(s)
         sys.exit(EXIT_OK)
 
-def int_errors(switch_name, oid, int_dict, mib ):
+def int_errors(switch_name, oid, int_dict, mib):
+    int_errors_yes = []
+    int_errors_no = []    
+
+    # Create file to store error count for each mib
+    mib_file_count_path = '/tmp/{0}.{1}'.format(mib, switch_name)
+    if not os.path.exists(mib_file_count_path):
+        os.mknod(mib_file_count_path)
+    # Run snmpwalk for oid and get output
     snmpwalk_cmd = 'snmpwalk -v 2c -c r0ck3tfu31# {0} {1}'.format(switch_name, oid)
     (status, output) = commands.getstatusoutput(snmpwalk_cmd)
+
+    # create dict for int_id ---> error count mapping
+    if os.path.getsize(mib_file_count_path) == 0:
+        with open(mib_file_count_path, 'w') as f:
+            for key in int_dict.keys():
+                my_dict = dict(re.findall('({0}).+:\s+(\d+)'.format(key), output))
+                f.write(int_dict[key] + ',' + my_dict[key] + '\n')
+    elif os.path.getsize(mib_file_count_path) != 0:
+        with open(mib_file_count_path, 'r') as f:
+            for line in f:
+                for key in int_dict.keys():
+                    match = re.search(r'({0})\,(\d+)'.format(int_dict[key]), line)
+                    if match:
+                        my_dict = dict(re.findall('({0}).+:\s+(\d+)'.format(key), output))
+                        int_id = match.group(1)
+                        error_count = int(match.group(2))
+                        if int(my_dict[key]) > int(error_count):
+                            int_errors_yes.append(int_dict[key])
+                            old_string = '{0},{1}\n'.format(int_dict[key], error_count)
+                            new_string = '{0},{1}\n'.format(int_dict[key], my_dict[key])
+                            tmp_path = '/tmp/tmp_file'
+                            diff = int(my_dict[key]) - int(error_count)
+                            fd, tmp_path = mkstemp()
+                            with fdopen(fd, 'w') as new_file:
+                                with open(mib_file_count_path) as old_file:
+                                    for line in old_file:
+                                        new_file.write(line.replace(old_string, new_string))
+
+                            remove(mib_file_count_path)
+                            move(tmp_path, mib_file_count_path)
+
+                        elif int(my_dict[key]) == int(error_count):
+                            int_errors_no.append(int_dict[key])
     
-    for key in int_dict.keys():
-        my_dict = dict(re.findall('({0}).+:\s+(\d+)'.format(key), output))
-        for key in my_dict.keys():
-            if my_dict[key] > '0':
-                print 'CRITICAL: {0} has {1} {2} errors'.format(int_dict[key], my_dict[key], mib)
-                count = 1
-            else:
-                print 'OK: {0} has {1} {2} errors'.format(int_dict[key], my_dict[key], mib)
-                count = 0
-    if count > 0:
-        sys.exit(EXIT_CRITICAL)
-    elif count == 0:
+    if len(int_errors_yes) > 0:
+        s = ', '.join(int_errors_yes)
+        print 'WARNING: Interfaces {0} have an increase in {1} errors since last check!'.format(s, mib) 
+        sys.exit(EXIT_WARN)
+    else:
+        s = ', '.join(int_errors_no)
+        print 'OK: Interfaces {0} have 0 {1} errors incremented since last check.'.format(s, mib) 
         sys.exit(EXIT_OK)
-     
-    
-    
 
 
 def main():
@@ -91,8 +130,9 @@ def main():
 
     (status, output) = commands.getstatusoutput(snmpwalk_ifalias_cmd)
 
-    # Maps interface id --> physical interface
-    int_dict = dict(re.findall('(\d+).+\((.+)\)\^\^', output))
+    # Open template file to grab switch name and interface
+    with open("switch_int.txt", 'r') as f:
+        match = re.findall 
 
     if args.module == 'ifAdminStatus':
         AdminStatus(args.hostname, ifAdminStatus, int_dict)
@@ -150,7 +190,7 @@ def main():
         int_errors(args.hostname, dot3HCStatsInternalMacReceiveErrors, int_dict, 'dot3HCStatsInternalMacReceiveErrors')
     elif args.module == 'dot3HCStatsSymbolErrors':
         int_errors(args.hostname, dot3HCStatsSymbolErrors, int_dict, 'dot3HCStatsSymbolErrors')
-    
+
 
 # This is the standard boilerplate that calls the main() function.
 if __name__ == '__main__':
