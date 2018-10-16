@@ -28,7 +28,7 @@ def AdminStatus(switch_name, oid, int_dict):
 
     if len(int_down) > 0:
         s = ', '.join(int_down)
-        print 'CRITICAL: Interfaces {0} are down!'.format(s) 
+        print 'CRITICAL: Interfaces {0} are down!'.format(s)
         sys.exit(EXIT_CRITICAL)
     else:
         s = ', '.join(int_up)
@@ -37,7 +37,7 @@ def AdminStatus(switch_name, oid, int_dict):
 
 def int_errors(switch_name, oid, int_dict, mib):
     int_errors_yes = []
-    int_errors_no = []    
+    int_errors_no = []
 
     # Create file to store error count for each mib
     mib_file_count_path = '/tmp/{0}.{1}'.format(mib, switch_name)
@@ -79,14 +79,14 @@ def int_errors(switch_name, oid, int_dict, mib):
 
                         elif int(my_dict[key]) == int(error_count):
                             int_errors_no.append(int_dict[key])
-    
+
     if len(int_errors_yes) > 0:
         s = ', '.join(int_errors_yes)
-        print 'WARNING: Interfaces {0} have an increase in {1} errors since last check!'.format(s, mib) 
+        print 'WARNING: Interfaces {0} have an increase in {1} errors since last check!'.format(s, mib)
         sys.exit(EXIT_WARN)
     else:
         s = ', '.join(int_errors_no)
-        print 'OK: Interfaces {0} have 0 {1} errors incremented since last check.'.format(s, mib) 
+        print 'OK: Interfaces {0} have 0 {1} errors incremented since last check.'.format(s, mib)
         sys.exit(EXIT_OK)
 
 
@@ -130,9 +130,8 @@ def main():
 
     (status, output) = commands.getstatusoutput(snmpwalk_ifalias_cmd)
 
-    # Open template file to grab switch name and interface
-    with open("switch_int.txt", 'r') as f:
-        match = re.findall 
+    # Maps interface id --> physical interface
+    int_dict = dict(re.findall('(\d+).+\((.+)\)\^\^', output))
 
     if args.module == 'ifAdminStatus':
         AdminStatus(args.hostname, ifAdminStatus, int_dict)
