@@ -1,4 +1,4 @@
-#!/Users/vbhatia/ENV/bin/python -tt
+#!/usr/bin/python -tt
 
 import sys
 import re
