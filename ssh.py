@@ -1,8 +1,8 @@
-#!/usr/bin/python -tt
+#!/Users/vineetbhatia/ENV/bin/python -tt
 
 import sys
 import re
-from pssh import ParallelSSHClient
+from pssh.clients import ParallelSSHClient
 import logging
 from socket import timeout
 import argparse
@@ -10,10 +10,10 @@ import argparse
 def ssh(hosts, cmd):
         failed_hosts = []
         logging.getLogger('pssh.ssh_client').addHandler(logging.NullHandler())
-        client = ParallelSSHClient(hosts, timeout=5)
+        client = ParallelSSHClient(hosts, timeout=5, user='vbhatia')
         output = client.run_command(cmd, stop_on_errors=False)
-        for host in output:
-            for line in output[host]['stdout']:
+        for host, host_output in output.items():
+            for line in host_output.stdout:
                 print line
             print '\r'
             if output[host]['exception'] is not None:

@@ -1,6 +1,6 @@
-#!/Users/vbhatia/ENV/bin/python -tt
+#!/Users/vineetbhatia/ENV/bin/python -tt
 import sys
-from pssh import ParallelSSHClient
+from pssh.clients import ParallelSSHClient
 import paramiko, base64
 import logging
 from socket import gethostbyname, gaierror, timeout
