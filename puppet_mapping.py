@@ -123,7 +123,6 @@ def main():
     service_manifest_path = '{}/git/operations/infradb/puppet/code/environments/production/modules/rfi/manifests/service/'.format(home_dir)
     puppet_repo_path = '{}/git/operations/puppet/'.format(home_dir)
     infradb_repo_path = '{}/git/operations/infradb/'.format(home_dir)
-    #puppet_search_module_path = '{}/git/operations/puppet/modules/**/manifests/**/**.pp'.format(home_dir)
     puppet_search_module_path = '{}/git/operations/puppet/modules/**/*.pp'.format(home_dir)
     infradb_search_module_path = '{}/git/operations/infradb/puppet/code/environments/production/modules/**/*.pp'.format(home_dir)
     my_puppet_files_list = glob2.glob(puppet_search_module_path, recursive=True)
