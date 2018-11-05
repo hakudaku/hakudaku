@@ -7,6 +7,7 @@ import commands
 import git
 from pssh.clients import ParallelSSHClient
 import time
+import glob2
 
 
 class bcolors:
@@ -22,7 +23,7 @@ class bcolors:
 # Script to display puppet configuration for a host
 
 
-def find_puppetv2_config(host, hosts_yaml_path, hosts_yaml_regex, enforcer_path, puppet_search_module_path, puppet_repo):
+def find_puppetv2_config(host, hosts_yaml_path, hosts_yaml_regex, enforcer_path, puppet_search_module_path, puppet_repo, my_puppet_files_list):
     print bcolors.UNDERLINE
     print puppet_repo.git.checkout('master')
     print bcolors.ENDC
@@ -52,16 +53,17 @@ def find_puppetv2_config(host, hosts_yaml_path, hosts_yaml_regex, enforcer_path,
                     class_match = re.findall(my_class_reg, f.read(), re.DOTALL)
                     print '{}\nService {} belongs to below classes:{}'.format(bcolors.HEADER, x, bcolors.ENDC)
                 for c in class_match:
-                    cmd = 'grep -R {} {}* | grep class'.format(c, puppet_search_module_path)
-                    print c
-                    print '{}\nPuppet manifest file where {} is defined:{}'.format(bcolors.HEADER, c, bcolors.ENDC)
-                    output = commands.getoutput(cmd)
-                    match = re.search(r'^(.+):class', output)
-                    print match.group(1)
+                    for filename in my_puppet_files_list:
+                        with open(filename, 'r') as f:
+                            my_regx = r'class\s+{}'.format(c)
+                            match = re.findall(my_regx, f.read())
+                            if match:
+                                print c
+                                print '{}\nPuppet manifest file where {} is defined:{}'.format(bcolors.HEADER, c, bcolors.ENDC)
+                                print filename
 
 
-def find_puppetv45_config(host, hosts_yaml_path, hosts_yaml_regex, service_manifest_path, infradb_search_module_path,
-                          infradb_repo):
+def find_puppetv45_config(host, hosts_yaml_path, hosts_yaml_regex, service_manifest_path, infradb_search_module_path, infradb_repo, my_infradb_files_list):
     print bcolors.UNDERLINE
     print infradb_repo.git.checkout('rails4')
     print bcolors.ENDC
@@ -95,12 +97,14 @@ def find_puppetv45_config(host, hosts_yaml_path, hosts_yaml_regex, service_manif
                         class_match = re.findall(my_class_reg, data, re.DOTALL)
                     print '{}\nService {} belongs to below classes:{}'.format(bcolors.HEADER, x, bcolors.ENDC)
                     for c in class_match:
-                        cmd = 'grep -R {} {}* | grep "class {}[ *(]"'.format(c, infradb_search_module_path, c)
-                        print c
-                        print '{}\nPuppet manifest file where {} is defined:{}'.format(bcolors.HEADER, c, bcolors.ENDC)
-                        output = commands.getoutput(cmd)
-                        match = re.search(r'^(.+):class', output)
-                        print match.group(1)
+                        for filename in my_infradb_files_list:
+                            with open(filename, 'r') as f:
+                                my_regx = r'class\s+{}'.format(c)
+                                match = re.findall(my_regx, f.read())
+                                if match:
+                                    print c
+                                    print '{}\nPuppet manifest file where {} is defined:{}'.format(bcolors.HEADER, c, bcolors.ENDC)
+                                    print filename
 
 
 def main():
@@ -119,8 +123,11 @@ def main():
     service_manifest_path = '{}/git/operations/infradb/puppet/code/environments/production/modules/rfi/manifests/service/'.format(home_dir)
     puppet_repo_path = '{}/git/operations/puppet/'.format(home_dir)
     infradb_repo_path = '{}/git/operations/infradb/'.format(home_dir)
-    puppet_search_module_path = '{}/git/operations/puppet/modules/'.format(home_dir)
-    infradb_search_module_path = '{}/git/operations/infradb/puppet/code/environments/production/modules/'.format(home_dir)
+    #puppet_search_module_path = '{}/git/operations/puppet/modules/**/manifests/**/**.pp'.format(home_dir)
+    puppet_search_module_path = '{}/git/operations/puppet/modules/**/*.pp'.format(home_dir)
+    infradb_search_module_path = '{}/git/operations/infradb/puppet/code/environments/production/modules/**/*.pp'.format(home_dir)
+    my_puppet_files_list = glob2.glob(puppet_search_module_path, recursive=True)
+    my_infradb_files_list = glob2.glob(infradb_search_module_path, recursive=True)
 
     infradb_repo = git.Repo(infradb_repo_path)
     puppet_repo = git.Repo(puppet_repo_path)
@@ -138,15 +145,15 @@ def main():
         for host in hosts:
             print '{}{} is running puppet version 2.x...\n{}'.format(bcolors.HEADER, host, bcolors.ENDC)
             time.sleep(5)
-            find_puppetv2_config(host, hosts_yaml_path, hosts_yaml_regex, enforcer_path, puppet_search_module_path, puppet_repo)
+            find_puppetv2_config(host, hosts_yaml_path, hosts_yaml_regex, enforcer_path, puppet_search_module_path, puppet_repo, my_puppet_files_list)
     elif match.group() == '4':
         print '{}{} is running puppet version 4.x...\n{}'.format(bcolors.HEADER, host, bcolors.ENDC)
         time.sleep(5)
-        find_puppetv45_config(host, hosts_yaml_path, hosts_yaml_regex, service_manifest_path, infradb_search_module_path)
+        find_puppetv45_config(host, hosts_yaml_path, hosts_yaml_regex, service_manifest_path, infradb_search_module_path, my_infradb_files_list)
     elif match.group() == '5':
         print '{}{} is running puppet version 5.x...\n{}'.format(bcolors.HEADER, host, bcolors.ENDC)
         time.sleep(5)
-        find_puppetv45_config(host, hosts_yaml_path, hosts_yaml_regex, service_manifest_path, infradb_search_module_path, infradb_repo)
+        find_puppetv45_config(host, hosts_yaml_path, hosts_yaml_regex, service_manifest_path, infradb_search_module_path, infradb_repo, my_infradb_files_list)
 
 
 # This is the standard boilerplate that calls the main() function.
