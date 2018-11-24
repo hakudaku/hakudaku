@@ -1,13 +1,12 @@
-#!/Users/vbhatia/ENV/bin/python -tt
+#!/Users/vineetbhatia/ENV/bin/python -tt
 import sys
-from pssh import ParallelSSHClient
+from pssh.clients import ParallelSSHClient
 import logging
 import re
 
 def run(host, cmd):
-  print cmd
   logging.getLogger('pssh.ssh_client').addHandler(logging.NullHandler()) #Adding NullHandler to the logger
-  client = ParallelSSHClient(host)
+  client = ParallelSSHClient(host, user='vbhatia')
   output = client.run_command(cmd, stop_on_errors=True, sudo=True)
   for host in output:
     print host + ':'
@@ -16,7 +15,7 @@ def run(host, cmd):
 
 def revert(host, cmd):
   logging.getLogger('pssh.ssh_client').addHandler(logging.NullHandler()) #Adding NullHandler to the logger
-  client = ParallelSSHClient(host)
+  client = ParallelSSHClient(host, user='vbhatia')
   output = client.run_command(cmd, stop_on_errors=True, sudo=True)
   for host in output:
     print host + ':'
