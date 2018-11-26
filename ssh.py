@@ -7,24 +7,34 @@ import logging
 from socket import timeout
 import argparse
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
 def ssh(hosts, cmd):
-        failed_hosts = []
-        logging.getLogger('pssh.ssh_client').addHandler(logging.NullHandler())
-        client = ParallelSSHClient(hosts, timeout=5, user='vbhatia')
-        output = client.run_command(cmd, stop_on_errors=False)
-        for host, host_output in output.items():
+    failed_hosts = []
+    logging.getLogger('pssh.ssh_client').addHandler(logging.NullHandler())
+    client = ParallelSSHClient(hosts, timeout=5, user='vbhatia')
+    output = client.run_command(cmd, stop_on_errors=False)
+    for host, host_output in output.items():
+        if  host_output.exception is not None:
+            failed_hosts.append(host)
+        else:
             for line in host_output.stdout:
                 print line
             print '\r'
-            if output[host]['exception'] is not None:
-                print '***********Check Host {}. It is either down, invalid, or\
-                       authentication failed*************\n'.format(host)
-            if output[host]['exit_code'] != 0:
-                failed_hosts.append(host)
-        if len(failed_hosts) > 0:
-            print '***Hosts failed***'
-        for host in failed_hosts:
-            print host
+
+    # Print ist of failed hosts
+    if len(failed_hosts) > 0:
+        print bcolors.FAIL + 'Unable to ssh to below host(s):' + bcolors.ENDC
+        for x in failed_hosts:
+            print bcolors.BOLD + x + bcolors.ENDC
 
 def main():
     parser = argparse.ArgumentParser(description="Run commands on multiple hosts in Parallel")
@@ -33,7 +43,7 @@ def main():
     group.add_argument("-n", "--nodename", help="Hostname on which running command (Note: A file with hostnames\
                                           can be substituted - see --file option)")
     group.add_argument("-f", "--file", help="Specify file name with hostnames listed one on each line")
-    
+
     args = parser.parse_args()
     cmd = 'hostname -f; {}'.format(args.cmd)
     host = ''
@@ -59,7 +69,7 @@ def main():
         for num in num_match:
             hosts.append(host_name.group(1) + num + host_colo.group(1))
         ssh(hosts, cmd)
-        
+
     elif args.file:
         host_file = args.file
         f = open(host_file, 'rU')
