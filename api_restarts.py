@@ -1,11 +1,11 @@
-#!/Users/vbhatia/ENV/bin/python -tt
+#!/Users/vineetbhatia/ENV/bin/python -tt
 import sys
-from pssh import ParallelSSHClient
+from pssh.clients import ParallelSSHClient
 import logging
 
 def run(cluster, cmd):
   logging.getLogger('pssh.ssh_client').addHandler(logging.NullHandler()) #Adding NullHandler to the logger
-  client = ParallelSSHClient(cluster)
+  client = ParallelSSHClient(cluster, user='vbhatia')
   output = client.run_command(cmd, stop_on_errors=True)
   for host in output:
     for line in output[host]['stdout']:
