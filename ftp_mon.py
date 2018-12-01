@@ -6,11 +6,12 @@ import sys
 import smtplib
 import dns.resolver
 from socket import error
+import time
 
 address = '54.225.231.149'
 port = 21
 sender = 'alerts@sizmek.com'
-rcpt = 'vivek.patil@sizmek.com'
+rcpt = 'vineet.bhatia@sizmek.com'
 subject = 'ftp connection failed on aws host 54.225.231.149'
 body = 'ftp connection failed on aws host 54.225.231.149!!'
 
@@ -27,14 +28,22 @@ def smtp(sender, rcpt, subject, body, server):
     else:
         print 'Successfully sent email'
 
-s = socket.socket()
-print 'Attempting to connect to %s on port %s' % (address, port)
-try:
-    s.settimeout(5)
-    s.connect((address, port))
-    print "Connected to %s on port %s" % (address, port)
-except socket.error, e:
-    print "Connection to %s on port %s failed: %s" % (address, port, e)
+# 3 attempts before considering failure
+attempts = 0
+while attempts < 3:
+    try:
+        print 'Attempting to connect to %s on port %s' % (address, port)
+        s = socket.socket()
+        s.settimeout(5)
+        s.connect((address, port))
+        print "Connected to %s on port %s" % (address, port)
+        s.close()
+        break
+    except socket.error, e:
+        attempts += 1
+        continue
+else:
+    print "Connection to %s on port %s failed 3 times!!: %s" % (address, port, e)
     search = re.search(r'.+@(.+)', rcpt)
     domain = search.group(1)
     answers = dns.resolver.query(domain, 'MX')
