@@ -1,6 +1,6 @@
 import os
 import sys
-from pssh import ParallelSSHClient
+from pssh.clients import ParallelSSHClient
 import logging
 
 def run(haproxy, cmd, bg, backend):

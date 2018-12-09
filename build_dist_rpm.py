@@ -2,7 +2,7 @@
 
 import sys
 import re
-from pssh import ParallelSSHClient
+from pssh.clients import ParallelSSHClient
 import paramiko, base64
 import logging
 

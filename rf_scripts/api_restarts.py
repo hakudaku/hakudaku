@@ -1,6 +1,6 @@
 #!/Users/vineetbhatia/ENV/bin/python -tt
 import sys
-from pssh import ParallelSSHClient
+from pssh.clients import ParallelSSHClient
 import logging
 
 def run(cluster, cmd):

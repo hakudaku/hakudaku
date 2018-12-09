@@ -1,4 +1,4 @@
-from pssh import ParallelSSHClient
+from pssh.clients import ParallelSSHClient
 import logging
 
 def ssh_parallel(hosts, cmd):
