@@ -70,7 +70,7 @@ def sftp(host):
   
 def ssh(hosts, cmd, weekly_path):
   print ('Gathering data...')
-  from pssh import ParallelSSHClient
+  from pssh.clients import ParallelSSHClient
   client = ParallelSSHClient(hosts, channel_timeout=7200)
   try:
     output = client.run_command(cmd)

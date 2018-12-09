@@ -19,7 +19,7 @@ def sftp(host):
   client.close()
 
 def ssh(hosts, cmd):
-  from pssh import ParallelSSHClient
+  from pssh.clients import ParallelSSHClient
   client = ParallelSSHClient(hosts, channel_timeout=3600)
   output = client.run_command(cmd)
   client.join(output)

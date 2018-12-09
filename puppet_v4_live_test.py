@@ -6,7 +6,7 @@ import time
 import sys
 import re
 #from __future__ import print_function
-from pssh import ParallelSSHClient
+from pssh.clients import ParallelSSHClient
 import paramiko, base64
 import logging
 import os

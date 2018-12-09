@@ -1,6 +1,6 @@
 import os
 import sys
-from pssh import ParallelSSHClient
+from pssh.clients import ParallelSSHClient
 import logging
 
 def snc(haproxy_snc, cmd, bg, backend):
