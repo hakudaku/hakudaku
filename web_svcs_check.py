@@ -1,6 +1,6 @@
-#!/Users/vbhatia/ENV/bin/python -tt
+#!/Users/vineetbhatia/ENV/bin/python -tt
 import sys
-from pssh import ParallelSSHClient
+from pssh.clients import ParallelSSHClient
 import paramiko, base64
 import logging
 import os
@@ -8,7 +8,7 @@ import re
 
 def ssh(cluster, cmd, web_svc_port_dict):
   logging.getLogger('pssh.ssh_client').addHandler(logging.NullHandler()) #Adding NullHandler to the logger
-  client = ParallelSSHClient(cluster)
+  client = ParallelSSHClient(cluster, user='vbhatia')
   for key in web_svc_port_dict.keys():
     output = client.run_command(cmd + ' ' + web_svc_port_dict[key], stop_on_errors=True)
     for host in output:
@@ -22,7 +22,7 @@ def scp(host, iws_config_path_remote, iws_config_path_local):
   client = paramiko.SSHClient()
   client.load_system_host_keys()
   client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-  client.connect(host)
+  client.connect(host, username='vbhatia')
 
   sftp = client.open_sftp()
   sftp.get(iws_config_path_remote, iws_config_path_local)
