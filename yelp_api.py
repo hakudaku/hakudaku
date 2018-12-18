@@ -1,8 +1,6 @@
 #!/Users/vineetbhatia/ENV/bin/python -tt
 
-import json 
 import requests
-import urllib2
 import argparse
 
 
