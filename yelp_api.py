@@ -24,31 +24,25 @@ def get_business_id(url, headers, params):
         if isinstance(v, list):
             if 'categories' not in params.keys():
                 my_dict = v[0]
-                category_dict = my_dict['categories'][0]
-                my_restaurant_dict = {my_dict['id']: [my_dict['name'], category_dict['title'], my_dict['rating'],my_dict['location']['display_address'], my_dict['display_phone']]}
-                for key in my_restaurant_dict:
-                    url = 'https://api.yelp.com/v3/businesses/{}/reviews'.format(key)
-                    name = my_restaurant_dict[key][0]
-                    cuisine = my_restaurant_dict[key][1]
-                    rating = my_restaurant_dict[key][2]
-                    address = my_restaurant_dict[key][3]
-                    phone = my_restaurant_dict[key][4]
-                    get_business_review(name, cuisine, rating, address, phone, url, headers)
+                get_restaurant_info(my_dict, url, headers, params)
             else:
                 for items in v:
                     if isinstance(items, dict):
                         my_dict = items
-                        category_dict = my_dict['categories'][0]
-                        my_restaurant_dict = {my_dict['id']: [my_dict['name'], category_dict['title'], my_dict['rating'], my_dict['location']['display_address'], my_dict['display_phone']]}
-                        for key in my_restaurant_dict:
-                            url = 'https://api.yelp.com/v3/businesses/{}/reviews'.format(key)
-                            name = my_restaurant_dict[key][0]
-                            cuisine = my_restaurant_dict[key][1]
-                            rating = my_restaurant_dict[key][2]
-                            address = my_restaurant_dict[key][3]
-                            phone = my_restaurant_dict[key][4]
-                            get_business_review(name, cuisine, rating, address, phone, url, headers)
+                        get_restaurant_info(my_dict, url, headers, params)
 
+
+def get_restaurant_info(my_dict, url, headers, params):
+    category_dict = my_dict['categories'][0]
+    my_restaurant_dict = {my_dict['id']: [my_dict['name'], category_dict['title'], my_dict['rating'], my_dict['location']['display_address'], my_dict['display_phone']]}
+    for key in my_restaurant_dict:
+        url = 'https://api.yelp.com/v3/businesses/{}/reviews'.format(key)
+        name = my_restaurant_dict[key][0]
+        cuisine = my_restaurant_dict[key][1]
+        rating = my_restaurant_dict[key][2]
+        address = my_restaurant_dict[key][3]
+        phone = my_restaurant_dict[key][4]
+        get_business_review(name, cuisine, rating, address, phone, url, headers)
 
 def get_business_review(name, cuisine, rating, address, phone, url, headers):
     print bcolors.FAIL + 'Name: {}'.format(name) + bcolors.ENDC
