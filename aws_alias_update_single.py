@@ -7,10 +7,6 @@ import os
 import fileinput
 import sys
 
-my_aws_start_cmd = 'for i in `aws ec2 describe-instances | grep InstanceId | awk -F\" \'{print $4}\'`;do aws ec2 start-instances --instance-ids $i;done'
-
-os.system(my_aws_start_cmd)
-
 my_bash = os.path.expanduser('~') + '/.bashrc'
 my_out_file = 'out.txt'
 
