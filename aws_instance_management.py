@@ -47,7 +47,7 @@ def update_bash(new_aws_hostname_str):
                         sys.exit(1)
                     if match.group(1) != new_aws_hostname_str:
                         string_to_replace = match.group(1)
-                        fout.write(line.replace(string_to_replace, 'ubuntu@' + new_aws_hostname_str))
+                        fout.write(line.replace(string_to_replace, new_aws_hostname_str))
                 else:
                     fout.write(line)
 # Rename out file to .bashrc
