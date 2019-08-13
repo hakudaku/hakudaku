@@ -5,7 +5,7 @@ import re
 from pssh.clients import ParallelSSHClient
 import logging
 from socket import timeout
-import time
+import datetime
 
 class bcolors:
     HEADER = '\033[95m'
@@ -18,12 +18,14 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 def run(host, pipeline):
+    currentDT = datetime.datetime.now()
     lag = []
     x = "'{print $5}'"
     my_host_str = ''.join(host)
     cmd = "/apps/kafka/bin/kafka-consumer-groups.sh --bootstrap-server {}:9552 --describe --new-consumer --group {}ingestionconsumers | grep {} | awk {}".format(my_host_str, pipeline, pipeline, x)
     print 'Running cmd {}\n\n'.format(cmd)
-    print 'Getting total lag from kafka host {}'.format(my_host_str) 
+    print 'Getting total lag from kafka host {}'.format(my_host_str)
+    print 'Time: {}'.format(currentDT)
     failed_hosts = []
     logging.getLogger('pssh.ssh_client').addHandler(logging.NullHandler())
     client = ParallelSSHClient(host, timeout=5, user='VBhatia')
@@ -37,7 +39,7 @@ def run(host, pipeline):
             #print '\r'
     lag_count = [int(i) for i in lag]
     total_lag = sum(lag_count)
-    print bcolors.FAIL + str(total_lag) + bcolors.ENDC
+    print bcolors.FAIL + 'Total lag: ' + str(total_lag) + bcolors.ENDC
 
     # Print ist of failed hosts
     if len(failed_hosts) > 0:
