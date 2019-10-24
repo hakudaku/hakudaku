@@ -2889,3 +2889,13 @@ fab-prod02-stm-h8         10.100.184.32
 10.100.1.52  fab=prod-twn-h2
 10.100.1.53  fab-prod-twn-h3
 10.100.17.250   infra-put-rds-new01
+
+# BNY
+10.185.123.240 sreappsbnyprod.bny.smarsh.cloud
+10.185.123.240 enterprisearchive.bny.smarsh.cloud
+10.185.123.245 srebnymuatnam.bny.smarsh.cloud
+10.185.123.245 bnymnamuat.bny.smarsh.cloud
+10.185.123.246 reportsrebnymuatnam.bny.smarsh.cloud
+10.185.123.246 reportbnymnamuat.bny.smarsh.cloud
+10.184.214.211 reportsreappsbnyprod.bny.smarsh.cloud
+10.185.123.211 reportenterprisearchive.bny.smarsh.cloud
