@@ -5,7 +5,7 @@ import sys
 import re
 
 def check_session(host_file):
-    hosts_to_upgrade = []
+    hosts_ready_to_reboot = []
     hosts_have_session = []
     with open(host_file) as f:
         for line in f:
@@ -19,25 +19,19 @@ def check_session(host_file):
             host_name = my_list[0]
             session_num = my_list[1]
             if session_num == '0':
-                hosts_to_upgrade.append(host)
+                hosts_ready_to_reboot.append(host)
             else:
                 hosts_have_session.append(host)
-    kernel_upgrade(hosts_to_upgrade, hosts_have_session)
-        
-def kernel_upgrade(hosts_to_upgrade, hosts_have_session):
-    for host in hosts_to_upgrade:
-        cmd = 'knife ssh -m {} "w"'.format(host)
-        (status, output) = commands.getstatusoutput(cmd)
-        if status:    ## Error case, print the command's output to stderr and exit
-                sys.stderr.write(output)
-                sys.exit(status)
-        print output
-    hosts_pending_upgrade(hosts_have_session)
+    create_files(hosts_ready_to_reboot, hosts_have_session)
 
-def create_pending_hosts_file(hosts_have_session):
-    with open('app_hosts_pending_kernel_update', 'a') as f:
+def create_files(hosts_ready_to_reboot, hosts_have_session):
+    with open('hosts_ready_to_reboot', 'a') as f:
+        for host in hosts_ready_to_reboot:
+            f.write(host + '\n')
+    with open('hosts_have_sessions', 'a') as f:
         for host in hosts_have_session:
-            f.write(host) 
+            f.write(host + '\n')
+
 
 def main():
     args = sys.argv[1:]
