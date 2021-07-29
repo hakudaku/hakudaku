@@ -19,8 +19,8 @@ def check_session(host_file):
                 sys.exit(status)
             my_list = output.split()
             host_name = my_list[0]
-            session_num = my_list[1]
-            if session_num == '0':
+            session_num = int(my_list[1])
+            if session_num == 0:
                 hosts_ready_to_reboot.append(host)
             else:
                 hosts_have_session.append(host)
