@@ -38,6 +38,8 @@ def create_files(hosts_ready_to_reboot, hosts_have_session, host_file):
         for host in hosts_have_session:
             f.write(host + '\n')
     # Remove hosts from the host file that have already been slated to be rebooted. Only keep the ones that still need a reboot (e.g. hosts_have_sessions)
+    # In place file update
+    # First, open the file and get all your lines from the file. Then reopen the file in write mode and write your lines back, removing or adding whatever lines
     with open(host_file, 'r') as f:
         lines = f.readlines()
     with open(host_file, 'w') as f:
