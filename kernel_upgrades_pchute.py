@@ -54,7 +54,13 @@ def reboot_em(hosts_ready_to_reboot):
     host_str = ' '.join(hosts_ready_to_reboot)
     print 'Hosts {} will reboot in 10 seconds'.format(host_str)
     time.sleep(10)
-    cmd = 'knife ssh -m "{}" "sudo init 6" -C {}'.format(host_str, host_num)
+    cmd = 'knife ssh -m "{}" "sudo systemctl reboot --force" -C {}'.format(host_str, host_num)
+    os.system(cmd)
+    run_chef(host_str, host_num)
+
+def run_chef(host_str, host_num):
+    time.sleep(300)
+    cmd = 'knife ssh -m "{}" "sudo -i chef-client" -C {}'.format(host_str, host_num)
     os.system(cmd)
 
 def main():
