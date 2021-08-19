@@ -38,8 +38,6 @@ def create_files(hosts_ready_to_reboot, hosts_have_session, host_file):
         for host in hosts_have_session:
             f.write(host + '\n')
     # Remove hosts from the host file that have already been slated to be rebooted. Only keep the ones that still need a reboot (e.g. hosts_have_sessions)
-    # In place file update
-    # First, open the file and get all your lines from the file. Then reopen the file in write mode and write your lines back, removing or adding whatever lines
     with open(host_file, 'r') as f:
         lines = f.readlines()
     with open(host_file, 'w') as f:
@@ -55,7 +53,13 @@ def reboot_em(hosts_ready_to_reboot):
     host_str = ' '.join(hosts_ready_to_reboot)
     print 'Hosts {} will reboot in 10 seconds'.format(host_str)
     time.sleep(10)
-    cmd = 'knife ssh -m "{}" "sudo init 6" -C {}'.format(host_str, host_num)
+    cmd = 'knife ssh -m "{}" "sudo systemctl reboot --force" -C {}'.format(host_str, host_num)
+    os.system(cmd)
+    run_chef(host_str, host_num)
+
+def run_chef(host_str, host_num):
+    time.sleep(300)
+    cmd = 'knife ssh -m "{}" "sudo -i chef-client" -C {}'.format(host_str, host_num)
     os.system(cmd)
 
 
