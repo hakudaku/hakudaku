@@ -22,7 +22,7 @@ def check_for_hosts_added_to_load(cli53_export_output_abs_path, dns_hostnames_li
 def check_for_hosts_removed_from_load(cli53_export_output_abs_path, dns_hostnames_list_new): # compare previous cli53 export hosts with current export to check if any new records were removed
     host_list_previous_cli53_export = []
     hosts_removed_from_load = []
-    dns_hostnames_str_new = ''.join(dns_hostnames_list_new) # convert current cli53 export list to str for easier comparision
+    dns_hostnames_str_new = ' '.join(dns_hostnames_list_new) # convert current cli53 export list to str for easier comparision
     with open(cli53_export_output_abs_path, 'r') as f: # convert previous cli53 export host file to list for easier comparision
         for line in f:
             line = line.strip('\n')
@@ -36,9 +36,6 @@ def check_for_hosts_removed_from_load(cli53_export_output_abs_path, dns_hostname
         write_to_log_removed(hosts_removed_from_load, cli53_export_output_abs_path, dns_hostnames_list_new)
     else:
         print 'No hosts removed'
-    with open(cli53_export_output_abs_path, 'w') as f:
-        for host in dns_hostnames_list_new:
-            f.write(host + '\n')
 
 
 def check_chef(hosts_added_to_load, cli53_export_output_abs_path, dns_hostnames_list_new):
@@ -48,7 +45,7 @@ def check_chef(hosts_added_to_load, cli53_export_output_abs_path, dns_hostnames_
         sys.stderr.write(output)
         sys.exit(status)
     chef_hostnames_list = re.findall(r'(\S+m)\s+', output)
-    chef_hostnames_list_str = ''.join(chef_hostnames_list) # convert chef host list to str for easier comparision
+    chef_hostnames_list_str = ' '.join(chef_hostnames_list) # convert chef host list to str for easier comparision
     for host in hosts_added_to_load:
         if host in chef_hostnames_list_str:
             hosts_added_to_load.remove(host)
@@ -56,15 +53,10 @@ def check_chef(hosts_added_to_load, cli53_export_output_abs_path, dns_hostnames_
         write_to_log_added(hosts_added_to_load, cli53_export_output_abs_path, dns_hostnames_list_new)
     else:
         print 'No hosts added'
-        with open(cli53_export_output_abs_path, 'w') as f:
-            for host in dns_hostnames_list_new:
-                f.write(host + '\n')
 
 def write_to_log_removed(hosts_removed_from_load, cli53_export_output_abs_path, dns_hostnames_list_new):
-    print hosts_removed_from_load
     host_str = ' '.join(hosts_removed_from_load)
     syslog_path = '/var/log/syslog'
-    print host_str
     with open(syslog_path, 'a') as f:
         f.write(host_str + ' ' + 'removed from load')
     with open(cli53_export_output_abs_path, 'w') as f:
