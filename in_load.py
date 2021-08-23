@@ -4,6 +4,7 @@ import commands
 import sys
 import os
 import re
+import time
 
 
 
@@ -56,23 +57,19 @@ def check_chef(hosts_added_to_load, cli53_export_output_abs_path, dns_hostnames_
 
 def write_to_log_removed(hosts_removed_from_load, cli53_export_output_abs_path, dns_hostnames_list_new):
     host_str = ' '.join(hosts_removed_from_load)
-    syslog_path = '/var/log/syslog'
-    with open(syslog_path, 'a') as f:
-        f.write(host_str + ' ' + 'removed from load')
-    with open(cli53_export_output_abs_path, 'w') as f:
-        for host in dns_hostnames_list_new:
-            f.write(host + '\n')
+    print '{} removed from load'.format(host_str)
+    #syslog_path = '/var/log/syslog'
+    #with open(syslog_path, 'a') as f:
+    #    f.write(host_str + ' ' + 'removed from load')
 
 
 
 def write_to_log_added(hosts_added_to_load, cli53_export_output_abs_path, dns_hostnames_list_new):
     host_str = ' '.join(hosts_added_to_load)
-    syslog_path = '/var/log/syslog'
-    with open(syslog_path, 'a') as f:
-        f.write(host_str + ' ' + 'added to load')
-    with open(cli53_export_output_abs_path, 'w') as f:
-        for host in dns_hostnames_list_new:
-            f.write(host + '\n')
+    print '{} added to load'.format(host_str)
+    #syslog_path = '/var/log/syslog'
+    #with open(syslog_path, 'a') as f:
+    #    f.write(host_str + ' ' + 'added to load')
 
 
 
@@ -89,6 +86,10 @@ def main():
     if os.path.exists(cli53_export_output_abs_path): # previously generated cli53 export list
         check_for_hosts_added_to_load(cli53_export_output_abs_path, dns_hostnames_list_new)
         check_for_hosts_removed_from_load(cli53_export_output_abs_path, dns_hostnames_list_new)
+        time.sleep(300)
+        with open(cli53_export_output_abs_path, 'w') as f:
+            for host in dns_hostnames_list_new:
+                f.write(host + '\n')
     else: # initial script run. No cli53 export list exists yet.
         with open(cli53_export_output_abs_path, 'w') as f:
             for host in dns_hostnames_list_new:
