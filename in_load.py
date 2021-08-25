@@ -17,7 +17,8 @@ def check_for_hosts_added_to_load(cli53_export_output_abs_path, dns_hostnames_li
                 pass
             elif host not in dns_hostnames_old: # current cli53 export has host which was not in previous cli53 export
                 hosts_added_to_load.append(host)
-    check_chef(hosts_added_to_load, cli53_export_output_abs_path, dns_hostnames_list_new)
+    if len(hosts_added_to_load) > 0:
+        check_chef(hosts_added_to_load)
 
 
 def check_for_hosts_removed_from_load(cli53_export_output_abs_path, dns_hostnames_list_new): # compare previous cli53 export hosts with current export to check if any new records were removed
@@ -34,12 +35,12 @@ def check_for_hosts_removed_from_load(cli53_export_output_abs_path, dns_hostname
         elif host not in dns_hostnames_str_new: # previous cli53 export has host which is not in current cli53 export
             hosts_removed_from_load.append(host)
     if len(hosts_removed_from_load) > 0:
-        write_to_log_removed(hosts_removed_from_load, cli53_export_output_abs_path, dns_hostnames_list_new)
+        write_to_log_removed(hosts_removed_from_load)
     else:
         print 'No hosts removed'
 
 
-def check_chef(hosts_added_to_load, cli53_export_output_abs_path, dns_hostnames_list_new):
+def check_chef(hosts_added_to_load):
     get_chef_record_cmd = "knife search '((chef_environment:eng OR chef_environment:qa OR chef_environment:prod) AND (tags:down OR tags:nomon OR tags:standby OR tags:decom))' -i"
     (status, output) = commands.getstatusoutput(get_chef_record_cmd)
     if status:    ## Error case, print the command's output to stderr and exit
@@ -51,33 +52,24 @@ def check_chef(hosts_added_to_load, cli53_export_output_abs_path, dns_hostnames_
         if host in chef_hostnames_list_str:
             hosts_added_to_load.remove(host)
     if len(hosts_added_to_load) > 0:
-        write_to_log_added(hosts_added_to_load, cli53_export_output_abs_path, dns_hostnames_list_new)
+        write_to_log_added(hosts_added_to_load)
     else:
         print 'No hosts added'
 
-def write_to_log_removed(hosts_removed_from_load, cli53_export_output_abs_path, dns_hostnames_list_new):
+def write_to_log_removed(hosts_removed_from_load):
     host_str = ' '.join(hosts_removed_from_load)
     print '{} removed from load'.format(host_str)
-    #syslog_path = '/var/log/syslog'
-    #with open(syslog_path, 'a') as f:
-    #    f.write(host_str + ' ' + 'removed from load')
 
-
-
-def write_to_log_added(hosts_added_to_load, cli53_export_output_abs_path, dns_hostnames_list_new):
+def write_to_log_added(hosts_added_to_load):
     host_str = ' '.join(hosts_added_to_load)
     print '{} added to load'.format(host_str)
-    #syslog_path = '/var/log/syslog'
-    #with open(syslog_path, 'a') as f:
-    #    f.write(host_str + ' ' + 'added to load')
-
 
 
 def main():
-    cli53_export_output_dir_path = '/run/cli53_export'
+    cli53_export_output_dir_path = os.path.expanduser('~')
     cli53_export_output_file = 'dns_hostnames'
     cli53_export_output_abs_path = os.path.join(cli53_export_output_dir_path, cli53_export_output_file)
-    get_rr_cmd = 'cli53 export ahttps.com'
+    get_rr_cmd = '/usr/local/bin/cli53 export ahttps.com;/usr/local/bin/cli53 export authentic8.com'
     (status, output) = commands.getstatusoutput(get_rr_cmd)
     if status:    ## Error case, print the command's output to stderr and exit
         sys.stderr.write(output)
