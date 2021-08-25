@@ -6,7 +6,12 @@ import os
 import re
 import time
 
-
+"""
+In-Load Monitoring and Logging
+continuous monitoring to identify
+when systems are put into the production
+load and taken out of the load
+"""
 
 def check_for_hosts_added_to_load(cli53_export_output_abs_path, dns_hostnames_list_new): # compare current cli53 export hosts with previous export to check if any new records were added
     hosts_added_to_load = []
@@ -19,6 +24,8 @@ def check_for_hosts_added_to_load(cli53_export_output_abs_path, dns_hostnames_li
                 hosts_added_to_load.append(host)
     if len(hosts_added_to_load) > 0:
         check_chef(hosts_added_to_load)
+    else:
+        print 'No hosts added'
 
 
 def check_for_hosts_removed_from_load(cli53_export_output_abs_path, dns_hostnames_list_new): # compare previous cli53 export hosts with current export to check if any new records were removed
