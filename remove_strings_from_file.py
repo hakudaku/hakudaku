@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+#
 # Compare file1 and file2. Final file3 will have all lines from file2 minus lines in file1.
 
 list_of_removed_hosts = []
