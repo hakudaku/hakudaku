@@ -182,7 +182,7 @@ PrepSofwareVersionLog()
 
       Row=`echo "${Line}" | awk -F'","' '{print $1","$20}'` # UPDATE_HERE: Update $20 to whatever field you are looking for
 
-      MyxID=""; MyxID=`echo ${Row} | awk -F"," '{print $1}' | tr -d '"'`
+      MyxID=""; MyxID=`echo ${Row} | awk -F"," '{print $1}' | tr -d '"' | tr "MYX_" "myx_"`
       if [ "${MyxID} " = " " ] ; then
         # We should NEVER See this - Previous scripts address this
         # We have an issue - the file may have gone away, or ?
@@ -217,7 +217,7 @@ PrepSofwareVersionLog()
       else
         # Convert any "spaces" to "underscores"
         Software_Version_Converted=""
-        Software_Version_Converted=`echo "${Software_Version}" | tr ' :.' '_' | tr -s '_'`
+        Software_Version_Converted=`expr ${Software_Version} / 1000`
         Software_Version=${Software_Version_Converted}
         # We are good - let's update the details
         # See if it's already in our SW version log. If not, appeand to list
