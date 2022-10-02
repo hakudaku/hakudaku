@@ -160,7 +160,7 @@ PrepScriptLog()
 
       Row=`echo "${Line}" | awk -F'","' '{print $1","$19","$17}'` # UPDATE_HERE: Update $19 to whatever field you are looking for
 
-      MyxID=""; MyxID=`echo ${Row} | awk -F"," '{print $1}' | tr -d '"'`
+      MyxID=""; MyxID=`echo ${Row} | awk -F"," '{print $1}' | tr -d '"' | tr "MYX_" "myx_"`
       Data_Timestamp=""; Data_Timestamp=`echo ${Row} | awk -F"," '{print $3}' | sed 's/"//g'`
       Data_Epoc=""; Data_Epoc=`date --date="${Data_Timestamp}" +%s`
       if [ "${MyxID} " = " " ] ; then
@@ -197,7 +197,7 @@ PrepScriptLog()
       else
         # Convert any "spaces" to "underscores"
         Cell_ID_Converted=""
-        Cell_ID_Converted=`echo "${Cell_ID}" | tr ' ' '_'`
+        Cell_ID_Converted=`expr ${Cell_ID} / 1000`
         Cell_ID=${Cell_ID_Converted}
         # We are good - let's update the details
         Echo "."
